@@ -348,3 +348,220 @@
     transition: none;
   }
 }
+
+/* ── Gift-wrap overlay ───────────────────────────── */
+.gift-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gift-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-color: var(--ivory);
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(177, 27, 43, 0.07) 0,
+      rgba(177, 27, 43, 0.07) 1px,
+      transparent 1px,
+      transparent 18px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(177, 27, 43, 0.07) 0,
+      rgba(177, 27, 43, 0.07) 1px,
+      transparent 1px,
+      transparent 18px
+    );
+}
+
+.gift-panel--left {
+  left: 0;
+  transform-origin: left center;
+  border-right: 1px solid rgba(177, 27, 43, 0.12);
+}
+
+.gift-panel--right {
+  right: 0;
+  transform-origin: right center;
+  border-left: 1px solid rgba(177, 27, 43, 0.12);
+}
+
+.gift-ribbon--h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2.6rem;
+  background: linear-gradient(
+    180deg,
+    #c9324a 0%,
+    var(--crimson-dark) 50%,
+    #c9324a 100%
+  );
+  box-shadow: 0 0 20px rgba(177, 27, 43, 0.35);
+  z-index: 2;
+  transform-origin: center center;
+}
+
+.gift-ribbon--v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.6rem;
+  background: linear-gradient(
+    90deg,
+    #c9324a 0%,
+    var(--crimson-dark) 50%,
+    #c9324a 100%
+  );
+  box-shadow: 0 0 20px rgba(177, 27, 43, 0.35);
+  z-index: 2;
+  transform-origin: center center;
+}
+
+.gift-center {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  pointer-events: none;
+}
+
+/* Bow */
+.gift-bow {
+  position: relative;
+  width: 180px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-bow__loop {
+  position: absolute;
+  width: 68px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9324a, var(--crimson-dark));
+  box-shadow:
+    inset 0 -4px 10px rgba(0, 0, 0, 0.2),
+    0 3px 12px rgba(126, 17, 32, 0.4);
+  top: 10px;
+}
+
+.gift-bow__loop--left {
+  left: 6px;
+  transform: rotate(-25deg);
+}
+
+.gift-bow__loop--right {
+  right: 6px;
+  transform: rotate(25deg);
+}
+
+.gift-bow__knot {
+  position: relative;
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--ivory);
+  border: 2.5px solid rgba(177, 27, 43, 0.22);
+  box-shadow:
+    0 6px 20px rgba(126, 17, 32, 0.35),
+    inset 0 1px 3px rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gift-bow__seal {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.gift-bow__tail {
+  position: absolute;
+  bottom: 0;
+  width: 28px;
+  height: 42px;
+  background: linear-gradient(180deg, var(--crimson-dark), #c9324a);
+  border-radius: 0 0 8px 8px;
+  clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%);
+}
+
+.gift-bow__tail--left {
+  left: 46px;
+  transform: rotate(-12deg);
+  transform-origin: top center;
+}
+
+.gift-bow__tail--right {
+  right: 46px;
+  transform: rotate(12deg);
+  transform-origin: top center;
+}
+
+/* Bottom-right corner CTA */
+.gift-cta-corner {
+  position: absolute;
+  bottom: 2.2rem;
+  right: 2.2rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  pointer-events: none;
+}
+
+.gift-cta {
+  font-family: var(--font-script);
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--crimson-dark);
+  margin: 0;
+  line-height: 1;
+  text-shadow: 0 1px 8px rgba(126, 17, 32, 0.12);
+  animation: gift-pulse 2.2s ease-in-out infinite;
+}
+
+.gift-sub {
+  font-family: var(--font-serif);
+  font-size: clamp(0.65rem, 1.8vw, 0.82rem);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0;
+}
+}
+
+@keyframes gift-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(0.97);
+  }
+}

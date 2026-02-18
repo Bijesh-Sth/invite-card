@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import sealIcon from "./assets/Icon.svg";
 import bgMusic from "./assets/sound.mp3";
 import {
+  AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
@@ -14,7 +15,9 @@ import "./App.css";
 function App() {
   const stageRef = useRef<HTMLElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const startMusicRef = useRef<(() => void) | null>(null);
   const [muted, setMuted] = useState(false);
+  const [opened, setOpened] = useState(false);
 
   useEffect(() => {
     const audio = new Audio(bgMusic);
@@ -22,65 +25,21 @@ function App() {
     audio.volume = 0.4;
     audioRef.current = audio;
 
-    let started = false;
-
-    // pointerdown / touchstart / keydown are true user-activation gestures —
-    // browsers always allow play() inside them.
-    const startWithGesture = () => {
-      if (started) return;
-      started = true;
-      audio.muted = false;
+    // Called directly from a tap/click so play() is always inside a trusted gesture
+    startMusicRef.current = () => {
       audio.play().catch(() => {});
-      cleanup();
     };
-
-    // scroll / wheel are NOT activation gestures, but muted autoplay always works.
-    // So we start muted on first scroll, then unmute immediately.
-    const startOnScroll = () => {
-      if (started) return;
-      started = true;
-      audio.muted = true;
-      audio
-        .play()
-        .then(() => {
-          audio.muted = false;
-        })
-        .catch(() => {});
-      cleanup();
-    };
-
-    const cleanup = () => {
-      window.removeEventListener("pointerdown", startWithGesture);
-      window.removeEventListener("touchstart", startWithGesture);
-      window.removeEventListener("keydown", startWithGesture);
-      window.removeEventListener("wheel", startOnScroll);
-      window.removeEventListener("scroll", startOnScroll);
-    };
-
-    window.addEventListener("pointerdown", startWithGesture, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("touchstart", startWithGesture, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", startWithGesture, { once: true });
-    window.addEventListener("wheel", startOnScroll, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("scroll", startOnScroll, {
-      once: true,
-      passive: true,
-    });
 
     return () => {
-      cleanup();
       audio.pause();
       audio.src = "";
     };
   }, []);
+
+  const handleOpen = () => {
+    setOpened(true);
+    startMusicRef.current?.();
+  };
 
   const toggleMute = () => {
     if (!audioRef.current) return;
@@ -145,6 +104,69 @@ function App() {
 
   return (
     <main className="page">
+      <AnimatePresence>
+        {!opened && (
+          <motion.div
+            className="gift-overlay"
+            onClick={handleOpen}
+            exit={{ pointerEvents: "none" }}
+          >
+            <motion.div
+              className="gift-panel gift-panel--left"
+              exit={{
+                x: "-100%",
+                transition: {
+                  duration: 0.65,
+                  ease: [0.76, 0, 0.24, 1],
+                  delay: 0.15,
+                },
+              }}
+            />
+            <motion.div
+              className="gift-panel gift-panel--right"
+              exit={{
+                x: "100%",
+                transition: {
+                  duration: 0.65,
+                  ease: [0.76, 0, 0.24, 1],
+                  delay: 0.15,
+                },
+              }}
+            />
+            <motion.div
+              className="gift-ribbon gift-ribbon--h"
+              exit={{ scaleX: 0, transition: { duration: 0.2, delay: 0.05 } }}
+            />
+            <motion.div
+              className="gift-ribbon gift-ribbon--v"
+              exit={{ scaleY: 0, transition: { duration: 0.2, delay: 0.05 } }}
+            />
+            <motion.div
+              className="gift-center"
+              exit={{ scale: 0.5, opacity: 0, transition: { duration: 0.18 } }}
+            >
+              <div className="gift-bow">
+                <div className="gift-bow__loop gift-bow__loop--left" />
+                <div className="gift-bow__loop gift-bow__loop--right" />
+                <div className="gift-bow__tail gift-bow__tail--left" />
+                <div className="gift-bow__tail gift-bow__tail--right" />
+                <div className="gift-bow__knot">
+                  <img src={sealIcon} alt="" className="gift-bow__seal" />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="gift-cta-corner"
+              exit={{ opacity: 0, y: 12, transition: { duration: 0.15 } }}
+            >
+              <p className="gift-cta">Tap to Open</p>
+              <p className="gift-sub">Romi &amp; Aayush</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <button
         className="mute-btn"
         onClick={toggleMute}
