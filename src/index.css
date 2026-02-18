@@ -6,6 +6,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light only;
 
   --font-script: "Great Vibes", "Brush Script MT", cursive;
   --font-serif: "Cormorant Garamond", "Times New Roman", serif;

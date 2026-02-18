@@ -146,10 +146,111 @@ function App() {
               exit={{ scale: 0.5, opacity: 0, transition: { duration: 0.18 } }}
             >
               <div className="gift-bow">
-                <div className="gift-bow__loop gift-bow__loop--left" />
-                <div className="gift-bow__loop gift-bow__loop--right" />
-                <div className="gift-bow__tail gift-bow__tail--left" />
-                <div className="gift-bow__tail gift-bow__tail--right" />
+                <svg
+                  className="gift-bow__svg"
+                  viewBox="0 0 320 260"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient
+                      id="bow-gl"
+                      x1="100%"
+                      y1="0%"
+                      x2="0%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#d43650" />
+                      <stop offset="100%" stopColor="#6e0f1c" />
+                    </linearGradient>
+                    <linearGradient
+                      id="bow-gr"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#c02a41" />
+                      <stop offset="100%" stopColor="#7e1120" />
+                    </linearGradient>
+                    <linearGradient
+                      id="bow-gtail"
+                      x1="0%"
+                      y1="0%"
+                      x2="0%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stopColor="#7e1120" />
+                      <stop offset="60%" stopColor="#b91c30" />
+                      <stop offset="100%" stopColor="#d44060" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Tails — asymmetric: left wider & longer */}
+                  <path
+                    d="M 148 114 L 104 252 L 128 252 L 157 116 Z"
+                    fill="url(#bow-gtail)"
+                    opacity="0.95"
+                  />
+                  <path
+                    d="M 170 114 L 206 244 L 188 248 L 163 116 Z"
+                    fill="url(#bow-gtail)"
+                    opacity="0.9"
+                  />
+
+                  {/*
+                    Left loop — larger, tilted -28°
+                    fill-rule evenodd: outer minus inner = transparent gap
+                    Both centred at (80,88). Outer rx=80 ry=52, Inner rx=54 ry=32
+                  */}
+                  <path
+                    fillRule="evenodd"
+                    fill="url(#bow-gl)"
+                    transform="rotate(-28 80 88)"
+                    d="M 0 88 A 80 52 0 1 0 160 88 A 80 52 0 1 0 0 88 Z M 26 88 A 54 32 0 1 0 134 88 A 54 32 0 1 0 26 88 Z"
+                  />
+                  {/* Left sheen */}
+                  <ellipse
+                    cx="56"
+                    cy="66"
+                    rx="24"
+                    ry="11"
+                    transform="rotate(-28 56 66)"
+                    fill="rgba(255,255,255,0.18)"
+                  />
+
+                  {/*
+                    Right loop — slightly smaller & tilted +24°
+                    Centred at (240,92). Outer rx=76 ry=48, Inner rx=50 ry=30
+                  */}
+                  <path
+                    fillRule="evenodd"
+                    fill="url(#bow-gr)"
+                    transform="rotate(24 240 92)"
+                    d="M 164 92 A 76 48 0 1 0 316 92 A 76 48 0 1 0 164 92 Z M 190 92 A 50 30 0 1 0 290 92 A 50 30 0 1 0 190 92 Z"
+                  />
+                  {/* Right sheen */}
+                  <ellipse
+                    cx="264"
+                    cy="72"
+                    rx="22"
+                    ry="10"
+                    transform="rotate(24 264 72)"
+                    fill="rgba(255,255,255,0.15)"
+                  />
+
+                  {/* Center knot band */}
+                  <ellipse cx="160" cy="108" rx="20" ry="13" fill="#6e0f1c" />
+                  <ellipse
+                    cx="160"
+                    cy="106"
+                    rx="12"
+                    ry="7"
+                    fill="rgba(255,255,255,0.1)"
+                  />
+                </svg>
+
+                {/* Seal icon on top of knot */}
                 <div className="gift-bow__knot">
                   <img src={sealIcon} alt="" className="gift-bow__seal" />
                 </div>
