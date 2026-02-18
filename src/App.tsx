@@ -20,37 +20,63 @@ function App() {
     const audio = new Audio(bgMusic);
     audio.loop = true;
     audio.volume = 0.4;
-    audio.muted = true;
     audioRef.current = audio;
 
-    const tryPlay = () => {
+    let started = false;
+
+    // pointerdown / touchstart / keydown are true user-activation gestures —
+    // browsers always allow play() inside them.
+    const startWithGesture = () => {
+      if (started) return;
+      started = true;
+      audio.muted = false;
+      audio.play().catch(() => {});
+      cleanup();
+    };
+
+    // scroll / wheel are NOT activation gestures, but muted autoplay always works.
+    // So we start muted on first scroll, then unmute immediately.
+    const startOnScroll = () => {
+      if (started) return;
+      started = true;
+      audio.muted = true;
       audio
         .play()
         .then(() => {
-          // Muted play succeeded — unmute immediately for audible playback
           audio.muted = false;
         })
-        .catch(() => {
-          // Browser still blocked — wait for any user gesture then retry
-          const onGesture = () => {
-            audio.muted = false;
-            audio.play().catch(() => {});
-          };
-          window.addEventListener("pointerdown", onGesture, { once: true });
-          window.addEventListener("touchstart", onGesture, { once: true });
-          window.addEventListener("keydown", onGesture, { once: true });
-        });
+        .catch(() => {});
+      cleanup();
     };
 
-    // Wait until enough audio data is loaded before playing
-    if (audio.readyState >= 3) {
-      tryPlay();
-    } else {
-      audio.addEventListener("canplay", tryPlay, { once: true });
-    }
+    const cleanup = () => {
+      window.removeEventListener("pointerdown", startWithGesture);
+      window.removeEventListener("touchstart", startWithGesture);
+      window.removeEventListener("keydown", startWithGesture);
+      window.removeEventListener("wheel", startOnScroll);
+      window.removeEventListener("scroll", startOnScroll);
+    };
+
+    window.addEventListener("pointerdown", startWithGesture, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("touchstart", startWithGesture, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("keydown", startWithGesture, { once: true });
+    window.addEventListener("wheel", startOnScroll, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener("scroll", startOnScroll, {
+      once: true,
+      passive: true,
+    });
 
     return () => {
-      audio.removeEventListener("canplay", tryPlay);
+      cleanup();
       audio.pause();
       audio.src = "";
     };
