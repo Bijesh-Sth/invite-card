@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import sealIcon from "./assets/Icon.svg";
 import {
   motion,
   useMotionValue,
@@ -93,7 +94,9 @@ function App() {
             <motion.div
               className="envelope-seal"
               style={{ scale: sealScale, opacity: sealOpacity }}
-            />
+            >
+              <img src={sealIcon} alt="" className="envelope-seal-icon" />
+            </motion.div>
           </div>
 
           <motion.div
@@ -118,14 +121,13 @@ function App() {
                 <div className="detail">
                   <p className="detail-label">Reception</p>
                   <p className="detail-value">
-                    5:30 PM <br />
-                    Tuesday, 24 February 2026
+                    5:30 P.M. • Tuesday, 24 February, 2026
                   </p>
                 </div>
 
                 <div className="detail">
                   <p className="detail-label">Ceremony</p>
-                  <p className="detail-value">Thursday, 26 February 2026</p>
+                  <p className="detail-value">Thursday, 26 February, 2026</p>
                 </div>
 
                 <div className="detail">
