@@ -289,6 +289,41 @@
   box-shadow: 0 12px 24px rgba(177, 27, 43, 0.25);
 }
 
+.mute-btn {
+  position: fixed;
+  bottom: 1.4rem;
+  right: 1.4rem;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(177, 27, 43, 0.25);
+  background: rgba(255, 249, 242, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--crimson-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 4px 16px rgba(52, 20, 20, 0.12);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.mute-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(177, 27, 43, 0.2);
+}
+
+.mute-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .footer {
   text-align: center;
   padding: 1.5vh 8vw 2vh;

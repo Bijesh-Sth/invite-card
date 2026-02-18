@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import sealIcon from "./assets/Icon.svg";
+import bgMusic from "./assets/sound.mp3";
 import {
   motion,
   useMotionValue,
@@ -12,6 +13,58 @@ import "./App.css";
 
 function App() {
   const stageRef = useRef<HTMLElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [muted, setMuted] = useState(false);
+
+  useEffect(() => {
+    const audio = new Audio(bgMusic);
+    audio.loop = true;
+    audio.volume = 0.4;
+    audio.muted = true;
+    audioRef.current = audio;
+
+    const tryPlay = () => {
+      audio
+        .play()
+        .then(() => {
+          // Muted play succeeded — unmute immediately for audible playback
+          audio.muted = false;
+        })
+        .catch(() => {
+          // Browser still blocked — wait for any user gesture then retry
+          const onGesture = () => {
+            audio.muted = false;
+            audio.play().catch(() => {});
+          };
+          window.addEventListener("pointerdown", onGesture, { once: true });
+          window.addEventListener("touchstart", onGesture, { once: true });
+          window.addEventListener("keydown", onGesture, { once: true });
+        });
+    };
+
+    // Wait until enough audio data is loaded before playing
+    if (audio.readyState >= 3) {
+      tryPlay();
+    } else {
+      audio.addEventListener("canplay", tryPlay, { once: true });
+    }
+
+    return () => {
+      audio.removeEventListener("canplay", tryPlay);
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
+
+  const toggleMute = () => {
+    if (!audioRef.current) return;
+    const next = !muted;
+    audioRef.current.muted = next;
+    if (!next && audioRef.current.paused) {
+      audioRef.current.play().catch(() => {});
+    }
+    setMuted(next);
+  };
   const { scrollYProgress } = useScroll({
     target: stageRef,
     offset: ["start start", "end end"],
@@ -66,6 +119,44 @@ function App() {
 
   return (
     <main className="page">
+      <button
+        className="mute-btn"
+        onClick={toggleMute}
+        aria-label={muted ? "Unmute music" : "Mute music"}
+        title={muted ? "Unmute music" : "Mute music"}
+      >
+        {muted ? (
+          // Speaker off
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+        ) : (
+          // Speaker on
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+          </svg>
+        )}
+      </button>
       <header className="hero">
         <p className="eyebrow">Together with their families</p>
         <h1 className="hero-title">Romi & Aayush</h1>
@@ -112,7 +203,7 @@ function App() {
           >
             <motion.div className="invite-content">
               <p className="card-eyebrow">THURSDAY • 26 FEBRUARY 2026</p>
-              <h2 className="card-title">PlaceHolder</h2>
+              <h2 className="card-title">Romi & Aayush</h2>
               <p className="card-subtitle">
                 A celebration of love, laughter, and happily ever after.
               </p>
@@ -125,10 +216,10 @@ function App() {
                   </p>
                 </div>
 
-                <div className="detail">
+                {/* <div className="detail">
                   <p className="detail-label">Ceremony</p>
                   <p className="detail-value">Thursday, 26 February, 2026</p>
-                </div>
+                </div> */}
 
                 <div className="detail">
                   <p className="detail-label">Venue</p>
